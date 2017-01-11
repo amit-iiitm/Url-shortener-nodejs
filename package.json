@@ -1,0 +1,16 @@
+{
+  "name": "url_shortener",
+  "version": "0.0.0",
+  "description": "A nodejs, express, and mongodb url shortening service",
+  "main": " app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Amit Kumar",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "mongoose": "^4.7.6"
+  }
+}

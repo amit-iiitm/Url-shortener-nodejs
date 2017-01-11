@@ -1,0 +1,41 @@
+var mongoose=require('mongoose');
+var Schema=mongoose.Schema;
+
+//create the counters schema with an _id and a seq field 
+var CounterSchema=Schema({
+	_id:{type: String, required: true},
+	seq:{type: Number, default:0}
+});
+
+//create a model from that schema
+var counter=mongoose.model('counter',CounterSchema);
+
+//create a schema for our links
+var urlSchema=new Schema({
+	_id: {type: String,index:true},
+	long_url: String,
+	created_at: Date
+});
+
+//Before saving an entry in the urls collection, increment the global url_count in the counters collection and use that as the _id field of the urls collection
+
+//The pre('save', callback) middleware executes the callback function
+//every time before an entry is saved to the urls collection.
+urlSchema.pre('save',function(next){
+	var doc=this;
+	//find the url_count and increment it by 1
+	counter.findByIdAndUpdate({_id:'url_count'},{$inc:{seq:1} }, function(error, counter){
+		if(error)
+			return next(error) //In case you want to stop the flow of functions you can use next(err)
+		//set the _id of the urls collection to the incremented value of the counter
+		doc._id=counter.seq;
+		doc.created_at=new Date();
+		next(); //next() is part of connect middleware. Callbacks for router flow doesn't care if you return anything from your functions, so return next() and next(); return; is basically the same.
+		//Pretty much next() is used for extending the middleware of your requests.
+
+	});
+});
+
+var Url=mongoose.model('Url',urlSchema)
+
+module.exports=Url;
